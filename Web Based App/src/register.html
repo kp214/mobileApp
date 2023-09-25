@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0px;
+        }
+    </style>
+</head>
+<body>
+<!-- this is where stuff gets changed-->
+    <div class = "mb-5">
+        <h3 class = "mb-3">Sign Up</h3>
+        <input type = "text" placeholder="Full Name" id="nameInp" class = "form-control mb-3">
+        <input type = "text" placeholder="Email" id="emailInp" class = "form-control mb-3">
+        <input type = "text" placeholder="Username" id="userInp" class = "form-control mb-3">
+        <input type = "text" placeholder="Password" id="passInp" class = "form-control mb-3">
+        <button type = "text" id = "sub_btn" class = "btn w-100 btn-outline-primary mb-3">Sign Up</button>
+        <a href = "login.html" class ="badge text-bg-info py-1 w-100">Already have an account?</a>
+    </div>
+
+
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDbL3xiYirCz72u2zzUsQkhztEm4LYO_24",
+    authDomain: "mobileapp2023-69ed1.firebaseapp.com",
+    databaseURL: "https://mobileapp2023-69ed1-default-rtdb.firebaseio.com",
+    projectId: "mobileapp2023-69ed1",
+    storageBucket: "mobileapp2023-69ed1.appspot.com",
+    messagingSenderId: "495099997724",
+    appId: "1:495099997724:web:85de7cf2fd674b808939d9",
+    measurementId: "G-L8QTCNCRDG"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+  import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+  const db = getDatabase();
+
+  //-----------------------Get references from the Web Page---------------------------//
+  const name = document.getElementById('nameInp');
+  const email = document.getElementById('emailInp');
+  const username = document.getElementById('userInp');
+  const password = document.getElementById('passInp');
+  const submit = document.getElementById('sub_btn');
+
+  //------------------ Validate the data entered ---------------------------//
+
+    function Validation() {
+        let nameregex = /^[a-zA-Z\s]+$/;
+        let email = /^[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.(com|net|org)$
+        let userregex = /^[a-zA-Z0-9]{5,16}$/;
+
+        if(!nameregex.test(name.value)){
+            return false;
+        }
+        if(!email.test(email.value)){
+            return false;
+        }
+        if(!userregex.test(username.value)){
+            return false;
+        }
+
+        return true;
+  }
+
+  //------------------Register the user in Firebase-----------------------//
+
+    function RegisterUser(){
+        if(!Validation()){
+            return;
+        };
+
+           const dbRef = ref(db);
+           get(child(dbRef, "UserList/"+username.value)).then(snapshot)=>{
+                if(snapchat.exists()){
+                    alert("Account already exists!");
+                }
+                else{
+                    set(ref(db, "UserList/"+username.value),
+                    {
+                        fullname: name.value,
+                        email: email.value,
+                        username: username.value,
+                        password: password.value
+                    })
+                }
+           }
+
+    }
+</script>
+</body>
+</html>

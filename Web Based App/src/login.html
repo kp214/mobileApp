@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class = "mb-5">
+    <h3 class = "mb-3">Login</h3>
+    <input type = "text" placeholder="Username" id="userInp" class = "form-control mb-3">
+    <input type = "text" placeholder="Password" id="passInp" class = "form-control mb-3">
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Keep me logged in</label>
+    </div>
+    <button type = "text" id = "sub_btn" class = "btn w-100 btn-outline-primary mb-3">Login</button>
+    <a href = "register.html" class ="badge text-bg-info py-1 w-100">Don't have an account, sign up here?</a>
+</div>
+
+
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDbL3xiYirCz72u2zzUsQkhztEm4LYO_24",
+    authDomain: "mobileapp2023-69ed1.firebaseapp.com",
+    databaseURL: "https://mobileapp2023-69ed1-default-rtdb.firebaseio.com",
+    projectId: "mobileapp2023-69ed1",
+    storageBucket: "mobileapp2023-69ed1.appspot.com",
+    messagingSenderId: "495099997724",
+    appId: "1:495099997724:web:85de7cf2fd674b808939d9",
+    measurementId: "G-L8QTCNCRDG"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+  import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+  const db = getDatabase();
+</script>
+</body>
+</html>
