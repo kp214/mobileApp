@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editTextRegisterEmail, editTextRegisterPwd, editTextRegisterFirstName, editTextRegisterLastName;
@@ -34,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         getSupportActionBar().setTitle("Sign Up!");
+        database = FirebaseDatabase.getInstance().getReference();
         findViews();
         showHidePwd();
         Button ButtonRegister = findViewById(R.id.button_register);
@@ -87,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(textFname + " " + textLname).build();
                             firebaseUser.updateProfile(profileUpdates);
                             Toast.makeText(RegisterActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-                            writeNewUser(textEmail, textFname, textPassword);
+                            writeNewUser(textEmail, textFname + " " + textLname, textPassword);
                             //open the userProfileActivity after the user is created
                             Intent userProfileActivity = new Intent(RegisterActivity.this, UserProfileActivity.class);
                             //STOP the user from going back to the register screen
@@ -110,9 +112,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void writeNewUser(String textEmail, String textFname, String textPassword) {
-         User user = new User(textFname, textEmail, textPassword);
-         database.child("users").child(""+user.getID());
+    private void writeNewUser(String textEmail, String textUsername, String textPassword) {
+         User user = new User(textUsername, textEmail, textPassword);
+         database.child("users").child(""+user.getID()).setValue(user);
     }
 
     private void showHidePwd() {

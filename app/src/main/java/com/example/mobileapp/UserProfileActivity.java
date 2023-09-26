@@ -22,7 +22,7 @@ import java.util.TimeZone;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    private TextView textViewWelcome, textViewFirstName, textViewLastName, textViewEmail, textViewRegisterDate;
+    private TextView textViewWelcome, textViewUsername, textViewLastName, textViewEmail, textViewRegisterDate;
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private DatabaseReference database;
@@ -58,7 +58,7 @@ public class UserProfileActivity extends AppCompatActivity {
         String name = firebaseUser.getDisplayName();
         String email = firebaseUser.getEmail();
         textViewEmail.setText(email);
-        textViewFirstName.setText(name);
+        textViewUsername.setText(name);
         textViewWelcome.setText(name);
         String welcome = getResources().getString(R.string.welcome_user);
         textViewWelcome.setText(welcome);
@@ -97,7 +97,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void findViews() {
         textViewWelcome = findViewById(R.id.textView_welcome);
-        textViewFirstName = findViewById(R.id.textView_show_name);
+        textViewUsername = findViewById(R.id.textView_show_name);
         textViewEmail = findViewById(R.id.textView_show_email);
         textViewRegisterDate = findViewById(R.id.textView_register);
         progressBar = findViewById(R.id.progressbar);

@@ -41,6 +41,7 @@ public class UserUpdateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_update);
         getSupportActionBar().setTitle("Update");
+        auth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = auth.getCurrentUser();
         findViews();
         showCurrentUser(firebaseUser);
