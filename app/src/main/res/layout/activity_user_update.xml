@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity_user_update"
+    tools:context=".UserUpdateActivity"
     android:background="@drawable/calm_back">
 
 
@@ -29,35 +29,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border"
-            android:hint="First Name"
+            android:hint="loading..."
             android:layout_gravity="center"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"
             android:layout_marginTop="40dp"
             android:padding="15dp"
             android:textColorHint="@color/black"
-            android:id="@+id/editText_update_fname"/>
+            android:id="@+id/editText_update_username"/>
 
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border"
-            android:hint="Last Name"
-            android:layout_gravity="center"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginTop="40dp"
-            android:padding="15dp"
-            android:textColorHint="@color/black"
-            android:id="@+id/editText_update_lname"/>
-
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:hint="Email"
+            android:hint="loading..."
             android:layout_gravity="center"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"
@@ -71,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border"
-            android:hint="Password"
+            android:hint="loading..."
             android:layout_gravity="center"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"

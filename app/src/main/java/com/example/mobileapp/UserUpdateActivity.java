@@ -20,12 +20,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 
 public class UserUpdateActivity extends AppCompatActivity {
-    private EditText editTextUpdateEmail, editTextUpdatePwd, editTextUpdateFirstName, editTextUpdateLastName;
+    private EditText editTextUpdateEmail, editTextUpdatePwd, editTextUpdateUsername;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
     private DatabaseReference database;
@@ -36,19 +41,28 @@ public class UserUpdateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_update);
         getSupportActionBar().setTitle("Update");
-        updateInfo();
+        FirebaseUser firebaseUser = auth.getCurrentUser();
+        findViews();
+        showCurrentUser(firebaseUser);
+        updateUserInfo();
+    }
+
+    private void showCurrentUser(FirebaseUser firebaseUser) {
+        editTextUpdateUsername.setHint(firebaseUser.getDisplayName());
+        editTextUpdateEmail.setHint(firebaseUser.getEmail());
+        editTextUpdatePwd.setHint("Password");
+        //progressBar.setVisibility(View.GONE);
     }
 
 
-    private void updateInfo() {
+    private void updateUserInfo() {
         Button buttonUpdateInfo = findViewById(R.id.button_update);
         buttonUpdateInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String textEmail = editTextUpdateEmail.getText().toString();
                 String textPassword = editTextUpdatePwd.getText().toString();
-                String textFname = editTextUpdateFirstName.getText().toString();
-                String textLname = editTextUpdateLastName.getText().toString();
+                String textUsername = editTextUpdateUsername.getText().toString();
                 //check to see if data is valid before updating the user
                 if (textPassword.length() < 6 && textPassword.length() > 0) {
                     Toast.makeText(UserUpdateActivity.this, "Please enter password longer than 6 characters", Toast.LENGTH_SHORT).show();
@@ -56,8 +70,10 @@ public class UserUpdateActivity extends AppCompatActivity {
                     editTextUpdatePwd.requestFocus();
                 } else {
                     progressBar.setVisibility(View.VISIBLE); //----------------------------ADD progressbar -----------------------**********-------------------------
-                    updateUserEmail(textEmail);
-                    updateUserPassword(textPassword);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    updateUserEmail(textEmail, user);
+                    updateUserPassword(textPassword, user);
+                    updateUsername(textUsername, user);
                 }
                 Intent userProfileActivity = new Intent(UserUpdateActivity.this, UserProfileActivity.class);
                 userProfileActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -66,87 +82,52 @@ public class UserUpdateActivity extends AppCompatActivity {
             }
 
 
-            private void updateUserEmail(String textEmail) {
+            private void updateUserEmail(String textEmail, FirebaseUser user) {
                 if (!textEmail.isEmpty()) {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     user.updateEmail(textEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(UserUpdateActivity.this, "Email Update Successful", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-            }
-
-            private void updateUserPassword(String textPassword) {
-                if (!textPassword.isEmpty()) {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    user.updatePassword(textPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    //check to see if the user was created successfully
-                                    FirebaseUser firebaseUser = null;
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(UserUpdateActivity.this, "Password Update Successful", Toast.LENGTH_SHORT).show();
-                                        firebaseUser = auth.getCurrentUser();
-                                    }
-                                }
-                            });
-                }
-            }
-
-
-                   /* @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        //check to see if the user was created successfully
-                        FirebaseUser firebaseUser = null;
-                        if(task.isSuccessful()){
-                            firebaseUser = auth.getCurrentUser();
-                        }
-                        if(firebaseUser != null){
-                            //update display name of the user
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(textFname + " " + textLname).build();
-                            firebaseUser.updateProfile(profileUpdates);
-                            Toast.makeText(UserUpdateActivity.this, "Update Successful!", Toast.LENGTH_SHORT).show();
-                            updateUserInfo(textEmail, textFname, textPassword);
-                            //open the userProfileActivity after the user is created
-                            Intent userProfileActivity = new Intent(UserUpdateActivity.this, UserProfileActivity.class);
-                            //STOP the user from going back to the update screen
-                            userProfileActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(userProfileActivity);
-                            finish();
-                        } else {
-                            //handle the exceptions
-                            try {
-                                throw task.getException();
-
-
-                            } catch(Exception e) {
-                                Toast.makeText(UserUpdateActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(UserUpdateActivity.this, "Info Update Successful", Toast.LENGTH_SHORT).show();
                             }
-                            progressBar.setVisibility(View.GONE);
                         }
-                    }
-                });
+                    });
+                }
+            }
+
+            private void updateUsername(String textUsername, FirebaseUser user) {
+                UserProfileChangeRequest profileUpdateUsername = new UserProfileChangeRequest.Builder().setDisplayName(textUsername).build();
+                if (!textUsername.isEmpty()) {
+                    user.updateProfile(profileUpdateUsername).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(UserUpdateActivity.this, "Info Update Successful", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+
+            private void updateUserPassword(String textPassword, FirebaseUser user) {
+                if (!textPassword.isEmpty()) {
+                    user.updatePassword(textPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(UserUpdateActivity.this, "Info Update Successful", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             }
         });
-    }*/
+    }
 
-            private void updateUserInfo(String textEmail, String textFname, String textPassword) {
-                User user = new User(textFname, textEmail, textPassword);
-                database.child("users").child("" + user.getID());
-            }
-
-            private void findViews() {
-                editTextUpdateEmail = findViewById(R.id.editText_update_email);
-                editTextUpdatePwd = findViewById(R.id.editText_update_pwd);
-                editTextUpdateFirstName = findViewById(R.id.editText_update_fname);
-                editTextUpdateLastName = findViewById(R.id.editText_update_lname);
-                progressBar = findViewById(R.id.progressbar);
-            }
-
-        });
+    private void findViews() {
+        editTextUpdateEmail = findViewById(R.id.editText_update_email);
+        editTextUpdatePwd = findViewById(R.id.editText_update_pwd);
+        editTextUpdateUsername = findViewById(R.id.editText_update_username);
+        //progressBar = findViewById(R.id.progressbar);
     }
 }
