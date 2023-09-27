@@ -51,7 +51,8 @@ public class UserUpdateActivity extends AppCompatActivity {
 
     private void showCurrentUser(FirebaseUser firebaseUser) {
         database.child("users").child(firebaseUser.getUid()).child("username").setValue(editTextUpdateUsername.getText().toString());
-
+        database.child("users").child(firebaseUser.getUid()).child("email").setValue(editTextUpdateEmail.getText().toString());
+        database.child("users").child(firebaseUser.getUid()).child("password").setValue(editTextUpdatePassword.getText().toString());
     }
 
 
