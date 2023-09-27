@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,10 +50,8 @@ public class UserUpdateActivity extends AppCompatActivity {
     }
 
     private void showCurrentUser(FirebaseUser firebaseUser) {
-        editTextUpdateUsername.setText(firebaseUser.getDisplayName());
-        editTextUpdateEmail.setText(firebaseUser.getEmail());
-        editTextUpdatePwd.setText("Password");
-        progressBar.setVisibility(View.GONE);
+        database.child("users").child(firebaseUser.getUid()).child("username").setValue(editTextUpdateUsername.getText().toString());
+
     }
 
 
@@ -75,6 +74,7 @@ public class UserUpdateActivity extends AppCompatActivity {
                     updateUserEmail(textEmail, user);
                     updateUserPassword(textPassword, user);
                     updateUsername(textUsername, user);
+                    updateDatabase(textUsername, textEmail, textPassword);
                 }
                 Intent userProfileActivity = new Intent(UserUpdateActivity.this, UserProfileActivity.class);
                 userProfileActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -84,7 +84,6 @@ public class UserUpdateActivity extends AppCompatActivity {
 
 
             private void updateUserEmail(String textEmail, FirebaseUser user) {
-                if (!textEmail.isEmpty()) {
                     user.updateEmail(textEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -93,12 +92,10 @@ public class UserUpdateActivity extends AppCompatActivity {
                             }
                         }
                     });
-                }
             }
 
             private void updateUsername(String textUsername, FirebaseUser user) {
                 UserProfileChangeRequest profileUpdateUsername = new UserProfileChangeRequest.Builder().setDisplayName(textUsername).build();
-                if (!textUsername.isEmpty()) {
                     user.updateProfile(profileUpdateUsername).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -107,11 +104,9 @@ public class UserUpdateActivity extends AppCompatActivity {
                             }
                         }
                     });
-                }
             }
 
             private void updateUserPassword(String textPassword, FirebaseUser user) {
-                if (!textPassword.isEmpty()) {
                     user.updatePassword(textPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -120,9 +115,15 @@ public class UserUpdateActivity extends AppCompatActivity {
                             }
                         }
                     });
-                }
             }
         });
+    }
+
+    private void updateDatabase(String username, String email, String password) {
+        database = FirebaseDatabase.getInstance().getReference();
+        database.child("users").child("username").setValue(username);
+        database.child("users").child("email").setValue(email);
+        database.child("users").child("password").setValue(password);
     }
 
     private void findViews() {

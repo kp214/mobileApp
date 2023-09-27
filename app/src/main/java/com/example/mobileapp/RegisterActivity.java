@@ -82,6 +82,10 @@ public class RegisterActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = null;
                         if(task.isSuccessful()){
                             firebaseUser = auth.getCurrentUser();
+                            database.child("users").child("username").setValue(textFname + " " + textLname);
+                            database.child("users").child("email").setValue(textEmail);
+                            database.child("users").child("password").setValue(textPassword);
+
                         }
                         if(firebaseUser != null){
                             //update display name of the user
