@@ -49,10 +49,10 @@ public class UserUpdateActivity extends AppCompatActivity {
     }
 
     private void showCurrentUser(FirebaseUser firebaseUser) {
-        editTextUpdateUsername.setHint(firebaseUser.getDisplayName());
-        editTextUpdateEmail.setHint(firebaseUser.getEmail());
-        editTextUpdatePwd.setHint("Password");
-        //progressBar.setVisibility(View.GONE);
+        editTextUpdateUsername.setText(firebaseUser.getDisplayName());
+        editTextUpdateEmail.setText(firebaseUser.getEmail());
+        editTextUpdatePwd.setText("Password");
+        progressBar.setVisibility(View.GONE);
     }
 
 
@@ -70,7 +70,7 @@ public class UserUpdateActivity extends AppCompatActivity {
                     editTextUpdatePwd.setError("Password is required to be more than 6 characters!");
                     editTextUpdatePwd.requestFocus();
                 } else {
-                    progressBar.setVisibility(View.VISIBLE); //----------------------------ADD progressbar -----------------------**********-------------------------
+                    progressBar.setVisibility(View.VISIBLE);
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     updateUserEmail(textEmail, user);
                     updateUserPassword(textPassword, user);
@@ -129,6 +129,6 @@ public class UserUpdateActivity extends AppCompatActivity {
         editTextUpdateEmail = findViewById(R.id.editText_update_email);
         editTextUpdatePwd = findViewById(R.id.editText_update_pwd);
         editTextUpdateUsername = findViewById(R.id.editText_update_username);
-        //progressBar = findViewById(R.id.progressbar);
+        progressBar = findViewById(R.id.progressbar);
     }
 }

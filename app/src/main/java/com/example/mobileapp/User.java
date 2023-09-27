@@ -26,6 +26,4 @@ public class User {
     }
 
     public int getID() { return ID; }
-
-    public String getPassword() { return password; }
 }

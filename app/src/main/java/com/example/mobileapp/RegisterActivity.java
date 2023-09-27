@@ -82,14 +82,13 @@ public class RegisterActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = null;
                         if(task.isSuccessful()){
                             firebaseUser = auth.getCurrentUser();
-                            database.child("users").child(firebaseUser.getUid()).setValue(new User(textFname+" "+textLname, textEmail, textPassword));
                         }
                         if(firebaseUser != null){
                             //update display name of the user
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(textFname + " " + textLname).build();
                             firebaseUser.updateProfile(profileUpdates);
                             Toast.makeText(RegisterActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-                            writeNewUser(textEmail, textFname + " " + textLname, textPassword);
+                            writeNewUser(textEmail, textFname, textPassword);
                             //open the userProfileActivity after the user is created
                             Intent userProfileActivity = new Intent(RegisterActivity.this, UserProfileActivity.class);
                             //STOP the user from going back to the register screen
@@ -112,9 +111,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void writeNewUser(String textEmail, String textUsername, String textPassword) {
-         User user = new User(textUsername, textEmail, textPassword);
-         database.child("users").child(""+user.getID()).setValue(user);
+    private void writeNewUser(String textEmail, String textFname, String textPassword) {
+         User user = new User(textFname, textEmail, textPassword);
+         database.child("users").child(""+user.getID());
     }
 
     private void showHidePwd() {

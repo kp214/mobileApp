@@ -85,7 +85,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             style="?android:attr/progressBarStyleLarge"
-            android:indeterminateTint="@color/orange"
+            android:indeterminateTint="@color/purple_700"
             android:elevation="10dp"
             android:visibility="gone"/>
 
