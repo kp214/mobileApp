@@ -14,7 +14,11 @@ import com.example.mobileapp.UserUpdateActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseUserMetadata;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,11 +36,12 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
         getSupportActionBar().setTitle("Home");
         auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser firebaseUser = auth.getCurrentUser();
         findViews();
         signOut();
         update();
         //show profile details if the user is not null
-        FirebaseUser firebaseUser = auth.getCurrentUser();
         if(firebaseUser != null) {
             progressBar.setVisibility(View.VISIBLE);
             showUserProfile(firebaseUser);
@@ -59,9 +64,7 @@ public class UserProfileActivity extends AppCompatActivity {
         String email = firebaseUser.getEmail();
         textViewEmail.setText(email);
         textViewUsername.setText(name);
-        textViewWelcome.setText(name);
-        String welcome = getResources().getString(R.string.welcome_user);
-        textViewWelcome.setText(welcome);
+        textViewWelcome.setText("Welcome " + name);
         progressBar.setVisibility(View.GONE);
     }
 
