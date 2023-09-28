@@ -30,14 +30,18 @@ public class UserProfileActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private DatabaseReference database;
+    private FirebaseDatabase firebaseDatabase;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         getSupportActionBar().setTitle("Home");
         auth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance().getReference();
+        firebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseUser firebaseUser = auth.getCurrentUser();
+        database = firebaseDatabase.getReference();
         findViews();
         signOut();
         update();
@@ -59,12 +63,33 @@ public class UserProfileActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
         sdf.setTimeZone(TimeZone.getDefault());
         String register = sdf.format(new Date(registerTimeStamp));
+        textViewRegisterDate.setText("User Since " + register);
         String registerDate = getResources().getString(R.string.user_since, register);
-        String name = firebaseUser.getDisplayName();
-        String email = firebaseUser.getEmail();
-        textViewEmail.setText(email);
-        textViewUsername.setText(name);
-        textViewWelcome.setText("Welcome " + name);
+        database.child("users").child("username").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String username = dataSnapshot.getValue().toString();
+                textViewUsername.setText(username);
+                textViewWelcome.setText("Welcome " + username);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(UserProfileActivity.this, "error displaying info", Toast.LENGTH_SHORT).show();
+            }
+        });
+        database.child("users").child("email").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String email = dataSnapshot.getValue().toString();
+                textViewEmail.setText(email);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(UserProfileActivity.this, "error displaying info", Toast.LENGTH_SHORT).show();
+            }
+        });
         progressBar.setVisibility(View.GONE);
     }
 
@@ -102,7 +127,8 @@ public class UserProfileActivity extends AppCompatActivity {
         textViewWelcome = findViewById(R.id.textView_welcome);
         textViewUsername = findViewById(R.id.textView_show_name);
         textViewEmail = findViewById(R.id.textView_show_email);
-        textViewRegisterDate = findViewById(R.id.textView_register);
+        textViewRegisterDate = findViewById(R.id.textView_show_register_date);
         progressBar = findViewById(R.id.progressbar);
+
     }
 }

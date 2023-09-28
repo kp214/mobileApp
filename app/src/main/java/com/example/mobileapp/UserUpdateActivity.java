@@ -3,6 +3,7 @@ package com.example.mobileapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.foundation.gestures.ForEachGestureKt;
 
 
 import android.content.Intent;
@@ -38,6 +39,7 @@ public class UserUpdateActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseAuth auth;
     private DatabaseReference database;
+    private FirebaseDatabase firebaseDatabase;
 
 
     @Override
@@ -46,19 +48,16 @@ public class UserUpdateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_update);
         getSupportActionBar().setTitle("Update");
         auth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseUser firebaseUser = auth.getCurrentUser();
-        database = FirebaseDatabase.getInstance().getReference();
+        database = firebaseDatabase.getReference();
         findViews();
         showCurrentUser(firebaseUser);
         updateUserInfo();
     }
 
     private void showCurrentUser(FirebaseUser firebaseUser) {
-        editTextUpdateUsername.setText(firebaseUser.getDisplayName());
-        editTextUpdateEmail.setText(firebaseUser.getEmail());
-        editTextUpdatePwd.setText("Password");
-        //username
-        /*database.child("users").child(firebaseUser.getUid()).child("username").addValueEventListener(new ValueEventListener() {
+        database.child("users").child("username").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String username = dataSnapshot.getValue().toString();
@@ -70,32 +69,30 @@ public class UserUpdateActivity extends AppCompatActivity {
                 Toast.makeText(UserUpdateActivity.this, "error displaying info", Toast.LENGTH_SHORT).show();
             }
         });
-        //email
-        database.child("users").child(firebaseUser.getUid()).child("email").addValueEventListener(new ValueEventListener() {
+        database.child("users").child("email").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String email = dataSnapshot.getValue().toString();
-                editTextUpdateUsername.setText(email);
+                editTextUpdateEmail.setText(email);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(UserUpdateActivity.this, "error displaying profile", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserUpdateActivity.this, "error displaying info", Toast.LENGTH_SHORT).show();
             }
         });
-        //password
-        database.child("users").child(firebaseUser.getUid()).child("password").addValueEventListener(new ValueEventListener() {
+        database.child("users").child("password").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String pwd = dataSnapshot.getValue().toString();
-                editTextUpdatePwd.setText(pwd);
+                String password = dataSnapshot.getValue().toString();
+                editTextUpdatePwd.setText(password);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(UserUpdateActivity.this, "error displaying profile", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserUpdateActivity.this, "error displaying info", Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
     }
 
 
@@ -115,9 +112,10 @@ public class UserUpdateActivity extends AppCompatActivity {
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    updateUserEmail(textEmail, user);
-                    updateUserPassword(textPassword, user);
+                    //updateUserEmail(textEmail, user);
+                    //updateUserPassword(textPassword, user);
                     updateUsername(textUsername, user);
+                    updateEmailAndPassword(textEmail, textPassword, user);
                     updateDatabase(textUsername, textEmail, textPassword);
                 }
                 Intent userProfileActivity = new Intent(UserUpdateActivity.this, UserProfileActivity.class);
@@ -136,6 +134,22 @@ public class UserUpdateActivity extends AppCompatActivity {
                             }
                         }
                     });
+            }
+
+            private void updateEmailAndPassword(String textEmail, String textPassword, FirebaseUser user) {
+                auth = FirebaseAuth.getInstance();
+                auth.createUserWithEmailAndPassword(textEmail, textPassword).addOnCompleteListener(UserUpdateActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        //check to see if the user was created successfully
+                        FirebaseUser tempUser = null;
+                        if (task.isSuccessful()) {
+                            tempUser = auth.getCurrentUser();
+                            auth.updateCurrentUser(tempUser); //keeps creating new users, but it works
+                            tempUser.delete();//------------------------------------------------------------------NOT DELETING-------------------************************--------------------
+                        }
+                    }
+                });
             }
 
             private void updateUsername(String textUsername, FirebaseUser user) {
